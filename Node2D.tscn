@@ -1,0 +1,69 @@
+[gd_scene load_steps=5 format=2]
+
+[ext_resource path="res://Node2D.gd" type="Script" id=3]
+
+[sub_resource type="Shader" id=1]
+code = "shader_type canvas_item;
+
+uniform vec2 mouse_pos;
+uniform float vsync_issues;
+
+float noise(float time, vec2 st) {
+	return fract(sin(dot(st.xy * vsync_issues, vec2(time, time * 13352.0) * mouse_pos)) * 8282.0);
+}
+
+void fragment() {
+	vec2 st = UV.xy / (1.0 / SCREEN_PIXEL_SIZE.xy);
+	vec4 random = vec4(vec3(noise(TIME, st)), 1.0);
+	COLOR = random;
+}"
+
+[sub_resource type="ShaderMaterial" id=2]
+shader = SubResource( 1 )
+shader_param/mouse_pos = null
+shader_param/vsync_issues = null
+
+[sub_resource type="Animation" id=3]
+resource_name = "interference"
+length = 10.0
+loop = true
+tracks/0/type = "value"
+tracks/0/path = NodePath(".:interference")
+tracks/0/interp = 2
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0, 0.2, 2, 2.2, 4, 6.1, 7.9, 10 ),
+"transitions": PoolRealArray( 1, 1, 1, 1, 1, 1, 1, 1 ),
+"update": 3,
+"values": [ Vector2( -30, -500 ), Vector2( 20, 40 ), Vector2( 80, 120 ), Vector2( 500, 800 ), Vector2( 1000, 200 ), Vector2( -99, 33 ), Vector2( 10, 967 ), Vector2( 30, 20 ) ]
+}
+tracks/1/type = "value"
+tracks/1/path = NodePath(".:vsync_issues")
+tracks/1/interp = 2
+tracks/1/loop_wrap = true
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/keys = {
+"times": PoolRealArray( 0, 0.4, 1.5, 4.7, 5.2, 7.8, 9.1 ),
+"transitions": PoolRealArray( 1, 1, 1, 1, 1, 1, 1 ),
+"update": 0,
+"values": [ 0.0, 50.0, 0.0, 322.0, 1.0, -200.0, 1.0 ]
+}
+
+[node name="Node2D" type="Node2D"]
+script = ExtResource( 3 )
+
+[node name="ColorRect" type="ColorRect" parent="."]
+material = SubResource( 2 )
+margin_top = -4.33606
+margin_right = 533.0
+margin_bottom = 295.664
+color = Color( 1, 0, 0, 1 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+anims/interference = SubResource( 3 )
